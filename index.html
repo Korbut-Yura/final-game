@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final Game</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <a class="logo" href="#">BATTLE OF MINDS</a>
+        </header>
+        <nav>
+            <ul>
+                <li id="about">ABOUT</li>
+                <li id="rules">RULES</li>
+                <li id ="developer">DEVELOPER</li>
+                <li id="screenshots">SCREENSHOTS</li>
+                <li id="play">PLAY</li>
+            </ul>
+        </nav>
+        <main>
+            <section class="about"> 
+                <h2>ABOUT</h2>
+
+            </section>
+            <section class="rules">
+                <h2>RULES</h2>
+            </section>
+            <section class="developer">
+                <h2>DEVELOPER</h2>
+                <figure>
+                    <img width="200px" height="200px" class="developer-foto" src='images/developer.jpg'>
+                    <figcaption>
+                            <a href="https://github.com/Korbut-Yura"><i class="fab fa-github"></i></a>
+                    </figcaption>
+                </figure>
+            </section>
+            <section class="screenshots">
+                <h2>SCREENSHOTS</h2>
+                <div class="screenshots-preview">
+                    <figure><img src="" alt=""></figure>
+                    <figure><img src="" alt=""></figure>
+                    <figure><img src="" alt=""></figure>
+                    <figure><img src="" alt=""></figure>
+                    <figure><img src="" alt=""></figure>
+                    <figure><img src="" alt=""></figure>
+                </div>
+                
+            </section>
+            <section class="play">
+                <form name="userData">
+                    <input type="text" id="firstName" name="name">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="secondName" name="name">
+                    <label for="secondName">Second Name</label>
+                </form>
+                <button id="button-start">PRESS START</button>
+            </section>
+        </main>
+    </div>
+    <div class="modalDialog">
+        <div class="modalDialog-spellBar">
+
+        </div>
+        <div class ="modalDialog-task hidden">
+            <div id="task"></div>
+            <form>
+                <input id="userInput" type="text" name="userInput">
+                <button id="accept">OK</button>
+            </form>
+        </div>
+    </div>
+    <script src ="dist/main.js"> </script>
+  
+</body>
+</html>
