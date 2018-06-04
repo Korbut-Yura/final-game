@@ -23,6 +23,7 @@ body {
     font: 2em "VanishingBoy", Tahoma, sans-serif;
     color: rgb(49, 93, 134);
     width: 100%;
+    text-align: center;
 }
 header {
     grid-area: header;
@@ -89,22 +90,68 @@ i {
     font-size: 1.5em;
     color: rgb(16, 47, 77);
 }
-
+canvas {
+    margin: 0 auto;
+}
 .modalDialog {
     position: absolute;
     width: 100%;
     height: 100%;
     z-index:100;
     background-color: rgba(60, 60, 60, 0.5);
-    display: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.modalDialog-spellBar,
-.modalDialog-task {
+.modalDialog-spellBar {
     margin: 0 auto;
-    width: 200px;
-    height: 200 px;
-    border: 1px solid red;
+    width: auto;
+    height: auto;
+}
+.modalDialog-spellBar li{
+    background: url("../images/spells.png") no-repeat;
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+}
+
+.modalDialog-spellBar ul {
+    display: grid;
+    justify-content: center;
+    grid-template-columns: repeat(3, 64px);
+    grid-template-rows: repeat(2, 64px);
+    grid-gap: 10px;
+}
+
+.modalDialog-spellBar li:nth-child(1){
+	background-position: -320px 0;
+}
+
+.modalDialog-spellBar li:nth-child(2){
+	background-position: -256px 0;
+}
+
+.modalDialog-spellBar li:nth-child(3){
+	background-position: -192px 0;
+}
+
+.modalDialog-spellBar li:nth-child(4){
+	background-position: -128px 0;
+}
+
+.modalDialog-spellBar li:nth-child(5){
+	background-position: -64px 0;
+}
+
+.modalDialog-spellBar li:nth-child(6){
+	background-position: 0 0;
+}
+.droppable {
+    list-style-type: none;
+}
+.draggable {
+    cursor: pointer;
 }
 .hidden {
     display: none;

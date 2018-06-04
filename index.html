@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Final Game</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
+    
 </head>
 <body>
     <div class="wrapper">
@@ -59,16 +60,23 @@
             </section>
         </main>
     </div>
-    <div class="modalDialog">
+    <div class="modalDialog hidden">
         <div class="modalDialog-spellBar">
+            <h2>Choose your spell</h2>
+            <ul>
+                <li></li>
+                <li></li>
+                <li></li>
+                <!-- <li></li>
+                <li></li>
+                <li></li> -->
+            </ul>
 
         </div>
         <div class ="modalDialog-task hidden">
-            <div id="task"></div>
-            <form>
-                <input id="userInput" type="text" name="userInput">
-                <button id="accept">OK</button>
-            </form>
+            <div id="task"></div>   
+            <input id="userInput" type="text" name="userInput">
+            <button id="accept">OK</button> 
         </div>
     </div>
     <script src ="dist/main.js"> </script>

@@ -17,12 +17,15 @@ let conf = {
                     ]
             },
             { 
-                test: /\.(woff|woff2|eot|ttf|svg|otf)$/, 
+                test: /\.(woff|woff2|eot|ttf|otf)$/, 
                 loader: 'url-loader?limit=100000' 
             },
             {
-                test: /\.png$/,
-                loader: 'file-loader'
+                test: /\.(png|svg|jpg)$/,
+                loader: 'file-loader',
+                options:  {
+                    name: 'images/[name].[ext]'
+                }
             }
                 
         ]
