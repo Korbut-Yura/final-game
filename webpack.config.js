@@ -26,8 +26,7 @@ let conf = {
                 options:  {
                     name: 'images/[name].[ext]'
                 }
-            }
-                
+            }   
         ]
     }
 }

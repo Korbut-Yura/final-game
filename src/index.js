@@ -42,7 +42,7 @@ startButton.addEventListener("click", () => {
         
         window.localStorage.setItem('1', JSON.stringify(userData));  // rewrite
         landingPage.style.display="none";
-        resources(['../images/knight.png', "../images/game-background.png", "../images/health-bar.png", "../images/fireball.png"]);
+        resources([hero, gameBackground, healthBar, fireballPic]);
         resources.onReady(init);
     }
     else {
@@ -86,10 +86,10 @@ function init() {
     canvas.height = 600;
     document.body.appendChild(canvas);
 
-    player = new Sprite('../images/knight.png', [0,0], [150,180], [100,370], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false);
-    enemy = new Sprite('../images/knight.png', [0,0], [150,180], [550,370], 8, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false);
-    playerHealth = new Sprite ('../images/health-bar.png', [0,41], [200,41], [20,40]);
-    enemyHealth = new Sprite ('../images/health-bar.png', [0,41], [200,41], [580,40]);
+    player = new Sprite(hero, [0,0], [150,180], [100,370], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false);
+    enemy = new Sprite(hero, [0,0], [150,180], [550,370], 8, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false);
+    playerHealth = new Sprite (healthBar, [0,41], [200,41], [20,40]);
+    enemyHealth = new Sprite (healthBar, [0,41], [200,41], [580,40]);
     instances.push(player,enemy, playerHealth, enemyHealth);
     lastTime = Date.now();
     main();
@@ -113,9 +113,9 @@ function main() {
 }
 
 function render() {
-    ctx.drawImage(resources.get('../images/game-background.png'), 0, 0 );
-    ctx.drawImage(resources.get('../images/health-bar.png'), 0, 0, 200, 41, 20, 40, 200, 41);
-    ctx.drawImage(resources.get('../images/health-bar.png'), 0, 0, 200, 41, 580, 40, 200, 41);
+    ctx.drawImage(resources.get(gameBackground), 0, 0 );
+    ctx.drawImage(resources.get(healthBar), 0, 0, 200, 41, 20, 40, 200, 41);
+    ctx.drawImage(resources.get(healthBar), 0, 0, 200, 41, 580, 40, 200, 41);
     instances.forEach((item)=> item.render(ctx));
     if (fireball) {
          fireball.render(ctx);
@@ -165,7 +165,7 @@ let promise = new Promise(function(resolve, reject) {
         if (answer == result) {
             answer=null;
             player.attack();
-            fireball = new Sprite("../images/fireball.png", [0,0], [128,49], [player.posCanvas[0], player.posCanvas[1]+player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
+            fireball = new Sprite(fireballPic, [0,0], [128,49], [player.posCanvas[0], player.posCanvas[1]+player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
         }
         else {
             console.log("you are wrong")
@@ -176,6 +176,11 @@ let promise = new Promise(function(resolve, reject) {
     .catch((e)=> { console.log(e)})    
 }
 
+
+const hero        = require('../images/knight.png');
+const gameBackground = require('../images/game-background.png');
+const healthBar = require('../images/health-bar.png');
+const fireballPic = require('../images/fireball.png')
 
 import  '../css/style.css';
 import resources from './resources.js';

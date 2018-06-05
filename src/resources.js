@@ -25,9 +25,7 @@ resources.load = function(url) {
         }
         resourceCache[url] = false;
         img.src = url;
-
     }
-    
 }
 
 resources.get = function (url) {
