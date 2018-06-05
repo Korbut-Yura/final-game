@@ -22,10 +22,14 @@ let conf = {
             },
             {
                 test: /\.(png|svg|jpg)$/,
-                loader: 'file-loader',
-                options:  {
-                    name: 'images/[name].[ext]'
-                }
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options:  {
+                            name: 'images/[name].[ext]'
+                        }
+                    }
+                ]   
             }   
         ]
     }
