@@ -1,6 +1,6 @@
 export default function dragNDrop () {
     const task = document.getElementById("task");
-
+    task.innerText = '';
     let result = _.chain(vocabulary).values().sample().value();
     let shuffleResult = _.chain(result).split('').shuffle().value();
 

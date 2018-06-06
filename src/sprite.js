@@ -1,7 +1,7 @@
 import resources from './resources.js';
 
 export default class Sprite {
-    constructor (url, posSprite, size, posCanvas, speed, frames, dir, once, dynamic) {
+    constructor (url, posSprite, size, posCanvas, speed, frames, dir, once, dynamic, map) {
         this.posSprite = posSprite;
         this.size = size;
         this.speed = typeof speed === 'number' ? speed : 0;
@@ -12,6 +12,7 @@ export default class Sprite {
         this.once = once;
         this.posCanvas = posCanvas;
         this.dynamic = dynamic;
+        this.spriteMap = map;
     }
     
     update(dt) {
@@ -23,10 +24,10 @@ export default class Sprite {
 
     render(ctx, pic) {
         let frame;
-        if ( this.speed != 0) {
+        if (this.speed != 0) {
             let max = this.frames.length;
             let index = Math.floor(this._index);
-            frame = this.frames [index % max];
+            frame = this.frames[index % max];
             if (this.once && frame == _.last(this.frames)) {
                 this.once = false;
                 this.posSprite[1] = 0;
@@ -42,13 +43,13 @@ export default class Sprite {
     }
 
     attack() {
-        this.posSprite[1] += this.size[1]*2;
+        this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf('attack'));
         this.once = true;
         this._index = 0;
     }
 
-    hit() {
-        this.posSprite[1] += this.size[1]*3;
+    hurt() {
+        this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf('hurt'));
         this.once = true;
         this._index = 0;
     }
