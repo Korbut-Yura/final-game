@@ -147,15 +147,47 @@ canvas {
 .modalDialog-spellBar li:nth-child(6){
 	background-position: 0 0;
 }
+#task {
+    border: 2px solid white;
+    background-color: rgba(233, 233, 233, 0.5);
+   
+}
+#sortable {
+    padding: 0 20px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    flex-direction: row; 
+}
 .droppable {
     list-style-type: none;
 }
+
 .draggable {
     cursor: pointer;
+    display: inline-block;
+    padding: 3px;
+    font-size: 1.5em;
+}
+
+.fas {
+    font-size: 0.5em;
 }
 .hidden {
     display: none;
 }   
+.highscoreTable {
+    position: absolute;
+    z-index: 100;
+    box-shadow: 0 0 5em 0 rgba(0, 0, 0, 0.7);
+    width: 400px;
+    height: 500px;
+    left: 50%;
+    top: 50%;
+    margin-left: -200px;
+    margin-top: -250px;
+    background-color: azure;
+}
 
 @font-face {
     font-family: "Tangak";

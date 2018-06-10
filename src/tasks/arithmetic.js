@@ -1,5 +1,11 @@
 export default function arithmetic() {
+    userInput.classList.remove("hidden");
     const task = document.getElementById("task");
+    const taskExplanation = document.getElementById('task-explanation');
+    const repeat = document.querySelector(".fa-redo-alt");
+    task.classList.remove('hidden');
+    repeat.classList.add('hidden');
+    taskExplanation.innerText ='Решите данное выражение.'
     let arrOper = ['+','-','/','*'];
     let oper = _.sample(arrOper);
     let a = _.random(1,50);

@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>Final Game</title>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css">
-    
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 </head>
 <body>
     <div class="wrapper">
@@ -33,7 +34,9 @@
                 <figure>
                     <img width="200px" height="200px" class="developer-foto" src='images/developer.jpg'>
                     <figcaption>
-                            <a href="https://github.com/Korbut-Yura"><i class="fab fa-github"></i></a>
+                            <a href="https://github.com/Korbut-Yura">
+                                <i class="fab fa-github"></i>
+                            </a>
                     </figcaption>
                 </figure>
             </section>
@@ -60,25 +63,34 @@
             </section>
         </main>
     </div>
-    <div class="modalDialog hidden">
-        <div class="modalDialog-spellBar">
-            <h2>Choose your spell</h2>
-            <ul>
-                <li></li>
-                <li></li>
-                <li></li>
-                <!-- <li></li>
-                <li></li>
-                <li></li> -->
-            </ul>
-
+    <div class ="gameWrapper hidden">
+        <div class="modalDialog hidden">
+            <div class="modalDialog-spellBar">
+                <h2>Choose your spell</h2>
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <!-- <li></li>
+                    <li></li> -->
+                </ul>
+            </div>
+            <div class ="modalDialog-task hidden">
+                <div id="task-explanation"></div>
+                <div id="task"></div>   
+                <input id="userInput" type="text" name="userInput">
+                <i class="fas fa-redo-alt hidden"></i>
+                <button id="accept">OK</button> 
+            </div>
+            <div class="modalDialog-highscore hidden">
+            </div>
         </div>
-        <div class ="modalDialog-task hidden">
-            <div id="task"></div>   
-            <input id="userInput" type="text" name="userInput">
-            <button id="accept">OK</button> 
-        </div>
+        <div class = "highscoreTable hidden">
+                <h2>Таблица результатов</h2>
+            </div>
+            <script src ="dist/main.js"> </script>
     </div>
-    <script src ="dist/main.js"> </script>
+   
 </body>
 </html>
