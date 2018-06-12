@@ -1,6 +1,5 @@
 export default function arithmetic() {
     userInput.classList.remove("hidden");
-    const task = document.getElementById("task");
     const taskExplanation = document.getElementById('task-explanation');
     const repeat = document.querySelector(".fa-redo-alt");
     task.classList.remove('hidden');

@@ -42,7 +42,7 @@ export default class Sprite {
         ctx.drawImage(resources.get(this.url), this.posSprite[0] + deltaX, this.posSprite[1] + deltaY, this.size[0], this.size[1], this.posCanvas[0], this.posCanvas[1], this.size[0], this.size[1]);
     }
 
-    attack() {
+    attack(self, spell) {
         this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf('attack'));
         this.once = true;
         this._index = 0;
@@ -50,6 +50,12 @@ export default class Sprite {
 
     hurt() {
         this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf('hurt'));
+        this.once = true;
+        this._index = 0;
+    }
+    
+    die() {
+        this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf('die'));
         this.once = true;
         this._index = 0;
     }

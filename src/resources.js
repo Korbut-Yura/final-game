@@ -17,10 +17,13 @@ resources.load = function(url) {
     }
     else {
         let img = new Image();
+        img.onprogress = (e) => {
+            console.log(e.loaded + '/' + e.total);
+        }
         img.onload = () => {
             resourceCache[url] = img;
             if(resources.isReady()) {
-                readyCallbacks.forEach(function(func) { func(); });
+                readyCallbacks.forEach(function(func) { func()});
             }
         }
         resourceCache[url] = false;

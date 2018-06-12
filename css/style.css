@@ -127,21 +127,36 @@ canvas {
 .modalDialog-spellBar li:nth-child(1){
 	background-position: -320px 0;
 }
+.modalDialog-spellBar li:nth-child(1):hover {
+    content: "Решенить арифметических выражений."
+}
 
 .modalDialog-spellBar li:nth-child(2){
 	background-position: -256px 0;
+}
+.modalDialog-spellBar li:nth-child(2):hover {
+    content: "Перевести слова на русский язык."
 }
 
 .modalDialog-spellBar li:nth-child(3){
 	background-position: -192px 0;
 }
+.modalDialog-spellBar li:nth-child(3):hover {
+    content: "Составить слово из указанных букв."
+}
 
 .modalDialog-spellBar li:nth-child(4){
 	background-position: -128px 0;
 }
+.modalDialog-spellBar li:nth-child(3):hover {
+    content: "Написать произнеенное слово."
+}
 
 .modalDialog-spellBar li:nth-child(5){
 	background-position: -64px 0;
+}
+.modalDialog-spellBar li:nth-child(5):hover {
+    content: "Закончить числовую последовательность."
 }
 
 .modalDialog-spellBar li:nth-child(6){

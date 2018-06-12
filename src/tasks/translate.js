@@ -2,7 +2,6 @@ import {vocabulary} from "./vocabulary.js";
 
 export default function translate() {
     userInput.classList.remove("hidden");
-    const task = document.getElementById("task");
     const taskExplanation = document.getElementById('task-explanation');
     const repeat = document.querySelector(".fa-redo-alt");
     task.classList.remove('hidden');

@@ -11,7 +11,9 @@ import Sprite from './sprite.js';
 import arithmetic from './tasks/arithmetic.js';
 import translate from './tasks/translate.js';
 import dragNDrop from './tasks/dragNDrop.js';
-import listening from './tasks/listening';
+import listening from './tasks/listening.js';
+import sequence from './tasks/sequence.js';
+import memory from './tasks/memory.js';
 
 const gameWrapper = document.querySelector(".gameWrapper");
 const nav = document.querySelector("nav");
@@ -21,11 +23,13 @@ const sections = Array.from(document.querySelectorAll("section"));
 const startButton = document.getElementById("button-start");
 const modalDialog = document.querySelector(".modalDialog");
 const spellBar = document.querySelector(".modalDialog-spellBar");
-const task = document.querySelector(".modalDialog-task");
+const taskDialog = document.querySelector(".modalDialog-task");
+const task = document.getElementById("task");
 const userInput = document.getElementById("userInput");
 const accept = document.getElementById("accept");
 const taskExplanation = document.getElementById('task-explanation');
 const highscoreTable = document.querySelector(".highscoreTable");
+const audio = document.getElementById('audio');
 
 let result;
 let spell;
@@ -62,7 +66,7 @@ startButton.addEventListener("click", () => {
 spellBar.addEventListener("click", (e) => {
     if (e.target.tagName == 'LI') {
         spellBar.classList.toggle("hidden");
-        task.classList.toggle("hidden");
+        taskDialog.classList.toggle("hidden");
         let ul = e.target.parentNode;
         let ulChilds = Array.from(ul.children);
         spell = ulChilds.indexOf(e.target)+'';
@@ -82,7 +86,15 @@ spellBar.addEventListener("click", (e) => {
             case '3':
                 result = listening();
                 console.log(result);
-                break
+                break;
+            case '4':
+                result = sequence();
+                console.log(result);
+                break;
+            case '5':
+                result = memory();
+                console.log(result);
+                break;
         }
     }
 })
@@ -131,9 +143,10 @@ class Game {
         this.canvas.width = 800;
         this.canvas.height = 600;
         gameWrapper.appendChild(this.canvas);
+        audio.play();
         this.ctx.fillStyle = "rgb(49, 93, 134)";
         this.ctx.font = "30px 'VanishingBoy'";
-        this.player = new Sprite(hero, [0,0], [150,180], [100,370], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false, ['idle','secondIdle','attack','hurt','die']);
+        this.player = new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false, ['idle','secondIdle','attack','hurt','die']);
         this.enemy = new Sprite(enemy, [0,0], [390,335], [390,200], 7, [0,1,2,3,4,5], "horizontal", false, false, ['idle','hurt','attack']);
         this.playerHealth = new Sprite (healthBar, [0,41], [200,41], [20,40]);
         this.enemyHealth = new Sprite (healthBar, [0,41], [200,41], [580,40]);
@@ -184,7 +197,8 @@ class Game {
         this.instances.forEach((item)=> item.render(this.ctx));
         if (this.cast) {
             this.cast.render(this.ctx);
-        } 
+        }
+       
     }
 
     checkCollision() {
@@ -199,8 +213,8 @@ class Game {
                 this.enemyName = Game.genericEnemyName();
                 this.score++;
                 this.enemyHealth.size[0] = 200;
-            } 
-            this.turn = "enemy";
+            }   
+            this.turn="player";
         }
     }
 
@@ -227,15 +241,17 @@ class Game {
             })
             .then(()=> {
                 if (answer == result || answer.indexOf(result) != -1) {
-                    this.player.attack();
-                    this.cast = new Sprite(fireballPic, [0,0], [128,49], [this.player.posCanvas[0], this.player.posCanvas[1]+this.player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
+                    this.player.attack(this, spell);
+                    this.cast = new Sprite(fireballPic, [0, (spell%3)*49], [128,49], [this.player.posCanvas[0], this.player.posCanvas[1]+this.player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
+                    let newAudio = new Audio('../audio/player_spell.wav');
+                    newAudio.play();
                 }
                 else {
-                    console.log("you are wrong");
                     this.turn = "enemy";
+                    console.log("you are wrong");
                 }
                 spellBar.classList.toggle("hidden");
-                task.classList.toggle("hidden");
+                taskDialog.classList.toggle("hidden");
 
                 spell = null;
                 answer =null;
@@ -254,17 +270,30 @@ class Game {
             }, 2000)
         })
         promise.then(()=> {
-            setTimeout(()=>{
-                this.playerHealth.size[0] -= 50; 
-                this.player.hurt();
-                this.playerHealth.size[0] <= 0 ? this.gameOver = true : this.turn = "player";
-            }, 1500)
+            return new Promise((resolve,reject) => {
+                setTimeout(()=>{
+                    this.playerHealth.size[0] -= 100; 
+                    if (this.playerHealth.size[0] <= 0) {
+                        this.player.die();
+                        resolve();
+                    } 
+                    else {
+                        this.player.hurt();
+                        this.turn = "player";
+                    }
+                }, 1500)
+            })
+        })
+        .then(() => {
+            setTimeout(() => {
+                this.gameOver = true;
+            }, 1000)
         })
     }
     showHighscore() {
         let highscore = JSON.parse(window.localStorage.getItem('highscore')) || [ ];
         highscore.push({'user': this.userName, 'score': this.score});
-        highscore = _.sortBy(highscore, ['age']);
+        highscore = _.sortBy(highscore, (a)=> -a.score);
         if (highscore.length > 10) {
             highscore.length = 10;
         }
