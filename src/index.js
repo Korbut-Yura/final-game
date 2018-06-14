@@ -1,9 +1,14 @@
 const _ = require('lodash');
 const hero = require('../images/knight.png');
-const enemy = require('../images/enemy.png')
 const gameBackground = require('../images/game-background.png');
 const healthBar = require('../images/health-bar.png');
 const fireballPic = require('../images/fireball.png');
+const heads = require('../images/enemy_parts/head.png');
+const bodys = require('../images/enemy_parts/body.png');
+const leftLegs = require('../images/enemy_parts/leftLegs.png');
+const rightLegs = require('../images/enemy_parts/rightLegs.png');
+const leftArms = require('../images/enemy_parts/leftArms.png');
+const rightArms = require('../images/enemy_parts/rightArms.png');
 
 import  '../css/style.css';
 import resources from './resources.js';
@@ -14,6 +19,7 @@ import dragNDrop from './tasks/dragNDrop.js';
 import listening from './tasks/listening.js';
 import sequence from './tasks/sequence.js';
 import memory from './tasks/memory.js';
+import enemySprite from './enemySprite.js'; 
 
 const gameWrapper = document.querySelector(".gameWrapper");
 const nav = document.querySelector("nav");
@@ -52,7 +58,7 @@ startButton.addEventListener("click", () => {
     if (userData.every((input)=> input.value)) {
         landingPage.classList.toggle('hidden');
         gameWrapper.classList.toggle('hidden');
-        resources([hero,enemy, gameBackground, healthBar, fireballPic]);
+        resources([hero, gameBackground, healthBar, fireballPic, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
         resources.onReady(() => {
             let game = new Game(userData);
             game.init();
@@ -138,7 +144,11 @@ class Game {
         let enemyName = _.sample(adjective) + ' ' + _.sample(noun) + ' ' + _.sample(name);
         return enemyName
     }
-    
+    static GenericParametrs(url,simpleSize, wrapPoint) {
+        this.url = url;
+        this.simpleSize = simpleSize;
+        this.wrapPoint = wrapPoint;
+    }
     init() {
         this.canvas.width = 800;
         this.canvas.height = 600;
@@ -147,9 +157,17 @@ class Game {
         this.ctx.fillStyle = "rgb(49, 93, 134)";
         this.ctx.font = "30px 'VanishingBoy'";
         this.player = new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false, ['idle','secondIdle','attack','hurt','die']);
-        this.enemy = new Sprite(enemy, [0,0], [390,335], [390,200], 7, [0,1,2,3,4,5], "horizontal", false, false, ['idle','hurt','attack']);
         this.playerHealth = new Sprite (healthBar, [0,41], [200,41], [20,40]);
         this.enemyHealth = new Sprite (healthBar, [0,41], [200,41], [580,40]);
+        
+        let leftLegsParam = new GenericParametrs(leftLegs,[41,62], [21,0]);
+        let rightLegsParam = new GenericParametrs(rightLegs, [44,64],[22,0]);
+        let leftArmsParam = new GenericParametrs(leftArms, [166,133], [140,20]);
+        let rightArmsParam = new GenericParametrs(rightArms, [77,140], [25,30]);
+        let bodyParam = new GenericParametrs(bodys, [134,150], [67,100]);
+        let headParam = new GenericParametrs(heads, [150,137], [90,100]);
+
+        this.enemy = new enemySprite([650,375], 7, leftLegsParam, rightLegsParam, leftArmsParam, bodyParam, rightArmsParam, headParam ); 
         this.instances.push(this.player, this.enemy, this.playerHealth, this.enemyHealth);
         this.lastTime = Date.now();
         this.main();
@@ -202,13 +220,19 @@ class Game {
     }
 
     checkCollision() {
-        if (this.cast && this.cast.posCanvas[0] + this.cast.size[0] > this.enemy.posCanvas[0] + this.enemy.size[0] / 2) {
+        if (this.cast && this.cast.posCanvas[0] + this.cast.size[0] > this.enemy.posCanvas[0]) {
             this.cast = null;
-            this.enemy.hurt();
+            this.enemy.action('hurt');
             this.enemyHealth.size[0] -= 105; 
             if (this.enemyHealth.size[0] < 0) {
                 let enemyIndex = this.instances.indexOf(this.enemy);
-                this.enemy = new Sprite(enemy, [0,0], [390,335], [390,200], 7, [0,1,2,3,4,5], "horizontal", false, false, ['idle','hurt','attack']);
+                 let leftLegsParam = new GenericParametrs(leftLegs,[41,62], [21,0]);
+                let rightLegsParam = new GenericParametrs(rightLegs, [44,64],[22,0]);
+                let leftArmsParam = new GenericParametrs(leftArms, [166,133], [140,20]);
+                let rightArmsParam = new GenericParametrs(rightArms, [77,140], [25,30]);
+                let bodyParam = new GenericParametrs(bodys, [134,150], [67,100]);
+                let headParam = new GenericParametrs(heads, [150,137], [90,100]);
+                this.enemy = new enemySprite([650,375], 7, leftLegsParam, rightLegsParam, leftArmsParam, bodyParam, rightArmsParam, headParam ); 
                 this.instances[enemyIndex]=this.enemy;
                 this.enemyName = Game.genericEnemyName();
                 this.score++;
@@ -241,7 +265,7 @@ class Game {
             })
             .then(()=> {
                 if (answer == result || answer.indexOf(result) != -1) {
-                    this.player.attack(this, spell);
+                    this.player.action("attack",spell);
                     this.cast = new Sprite(fireballPic, [0, (spell%3)*49], [128,49], [this.player.posCanvas[0], this.player.posCanvas[1]+this.player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
                     let newAudio = new Audio('../audio/player_spell.wav');
                     newAudio.play();
@@ -265,7 +289,7 @@ class Game {
         let promise = new Promise((resolve, reject) => {
             this.turn = null;
             setTimeout(()=>{
-                this.enemy.attack();
+                this.enemy.action("attack");
                 resolve();
             }, 2000)
         })
@@ -274,11 +298,11 @@ class Game {
                 setTimeout(()=>{
                     this.playerHealth.size[0] -= 100; 
                     if (this.playerHealth.size[0] <= 0) {
-                        this.player.die();
+                        this.player.action('die');
                         resolve();
                     } 
                     else {
-                        this.player.hurt();
+                        this.player.action('hurt');
                         this.turn = "player";
                     }
                 }, 1500)
@@ -306,5 +330,15 @@ class Game {
         }
         highscoreTable.appendChild(list);
             localStorage.setItem('highscore', JSON.stringify(highscore)); 
+    }
+}
+
+
+class GenericParametrs{
+    constructor(url,simpleSize, wrapPoint) {
+        this.url = url;
+        this.simpleSize = simpleSize;
+        this.wrapPoint = wrapPoint;
+        this.pos = _.random(0,2);
     }
 }
