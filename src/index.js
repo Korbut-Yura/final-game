@@ -10,6 +10,9 @@ const leftLegs = require('../images/enemy_parts/leftLegs.png');
 const rightLegs = require('../images/enemy_parts/rightLegs.png');
 const leftArms = require('../images/enemy_parts/leftArms.png');
 const rightArms = require('../images/enemy_parts/rightArms.png');
+const fireballSound = require('../audio/player_spell.wav');
+const boulderSound = require('../audio/bowling_roll.ogg');
+const winSound = require('../audio/win_sound.wav');
 
 const gameWrapper = document.querySelector(".gameWrapper");
 const nav = document.querySelector("nav");
@@ -213,8 +216,7 @@ class Game {
             target.sprite.action('hurt');
             target.health.size[0] -= 105; 
             if (this.enemy.health.size[0] <= 0) {
-                newAudio = new Audio('../audio/win_sound.wav');
-                gameWrapper.appendChild(newAudio);
+                newAudio = new Audio(winSound);
                 newAudio.play(); 
                 let enemyIndex = this.instances.indexOf(this.enemy.sprite);
                 this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
@@ -257,8 +259,7 @@ class Game {
                     this.player.sprite.action("attack", spell);
                     this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
                     this.instances.push(this.player.cast);
-                    newAudio = new Audio('../audio/player_spell.wav');
-                    gameWrapper.appendChild(newAudio);
+                    newAudio = new Audio(fireballSound);
                     newAudio.play();
                 }
                 else {
@@ -279,8 +280,7 @@ class Game {
         this.enemy.sprite.action("attack");
         this.enemy.cast = new Sprite(boulder, [0,0], [130,130], [this.enemy.sprite.posCanvas[0] - 130, 410], 10 ,[0,1,2,3,4,5], 'horisontal' ,false, 'left');
         this.instances.push(this.enemy.cast);
-        newAudio = new Audio('../audio/bowling_roll.ogg');
-        gameWrapper.appendChild(newAudio);
+        newAudio = new Audio(boulderSound);
         newAudio.play();
     }
 
