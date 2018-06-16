@@ -21,12 +21,12 @@ let conf = {
                 loader: 'url-loader?limit=100000' 
             },
             {
-                test: /\.(png|svg|jpg)$/,
+                test: /\.(png|svg|jpg|wav|ogg)$/,
                 use: [
                     {
                         loader: 'file-loader',
                         options:  {
-                            name: 'images/[name].[ext]'
+                            name: 'assets/[name].[ext]'
                         }
                     }
                 ]   

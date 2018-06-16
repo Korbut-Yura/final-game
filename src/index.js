@@ -2,24 +2,14 @@ const _ = require('lodash');
 const hero = require('../images/knight.png');
 const gameBackground = require('../images/game-background.png');
 const healthBar = require('../images/health-bar.png');
-const fireballPic = require('../images/fireball.png');
+const fireball = require('../images/fireball.png');
+const boulder = require('../images/boulder.png');
 const heads = require('../images/enemy_parts/head.png');
 const bodys = require('../images/enemy_parts/body.png');
 const leftLegs = require('../images/enemy_parts/leftLegs.png');
 const rightLegs = require('../images/enemy_parts/rightLegs.png');
 const leftArms = require('../images/enemy_parts/leftArms.png');
 const rightArms = require('../images/enemy_parts/rightArms.png');
-
-import  '../css/style.css';
-import resources from './resources.js';
-import Sprite from './sprite.js';
-import arithmetic from './tasks/arithmetic.js';
-import translate from './tasks/translate.js';
-import dragNDrop from './tasks/dragNDrop.js';
-import listening from './tasks/listening.js';
-import sequence from './tasks/sequence.js';
-import memory from './tasks/memory.js';
-import enemySprite from './enemySprite.js'; 
 
 const gameWrapper = document.querySelector(".gameWrapper");
 const nav = document.querySelector("nav");
@@ -58,7 +48,7 @@ startButton.addEventListener("click", () => {
     if (userData.every((input)=> input.value)) {
         landingPage.classList.toggle('hidden');
         gameWrapper.classList.toggle('hidden');
-        resources([hero, gameBackground, healthBar, fireballPic, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
+        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
         resources.onReady(() => {
             let game = new Game(userData);
             game.init();
@@ -90,6 +80,7 @@ spellBar.addEventListener("click", (e) => {
                 console.log(result);
                 break;
             case '3':
+                audio.pause();
                 result = listening();
                 console.log(result);
                 break;
@@ -113,6 +104,7 @@ accept.addEventListener("click", () => {
     else {
         answer = userInput.value ||' ';
     }
+     audio.play()
     modalDialog.classList.toggle('hidden');
   })
 
@@ -126,8 +118,16 @@ document.body.addEventListener('keyup',(e) => {
 /* ------FLOW-------- */
 class Game {
     constructor(userData) {
-        this.userName = userData.reduce((a,b)=> a.value+' '+ b.value);
-        this.enemyName = Game.genericEnemyName();
+        this.player={
+            name: userData.reduce((a,b)=> a.value+' '+ b.value),
+            sprite: new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horisontal", false, false, ['idle','secondIdle','attack','hurt','die']),
+            health: new Sprite (healthBar, [0,41], [200,41], [20,40])
+        };
+        this.enemy={
+            name: Game.genericEnemyName(),
+            sprite: new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads),
+            health: new Sprite (healthBar, [0,41], [200,41], [580,40])
+        };
         this.canvas = document.createElement("canvas");
         this.ctx = this.canvas.getContext("2d");
         this.instances = [];
@@ -137,18 +137,14 @@ class Game {
         this.gameOver = false;
         this.score = 0;
     }
+
     static genericEnemyName() {
         let adjective = ['Сопливый','Мерзкий','Вонючий','Злобный','Ужасный','Гадкий','Вредный','Опасный'];
         let noun = ['Огр','Волк','Тролль','Людоед','Хоббит','Гном','Гоблин','Орк'];
         let name = ['Том','Макс','Ник','Кайл','Фил','Гарольд','Шон','Дэн','Бим','Гарри'];
-        let enemyName = _.sample(adjective) + ' ' + _.sample(noun) + ' ' + _.sample(name);
-        return enemyName
+        return _.sample(adjective) + ' ' + _.sample(noun) + ' ' + _.sample(name);
     }
-    static GenericParametrs(url,simpleSize, wrapPoint) {
-        this.url = url;
-        this.simpleSize = simpleSize;
-        this.wrapPoint = wrapPoint;
-    }
+
     init() {
         this.canvas.width = 800;
         this.canvas.height = 600;
@@ -156,19 +152,7 @@ class Game {
         audio.play();
         this.ctx.fillStyle = "rgb(49, 93, 134)";
         this.ctx.font = "30px 'VanishingBoy'";
-        this.player = new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horizontal", false, false, ['idle','secondIdle','attack','hurt','die']);
-        this.playerHealth = new Sprite (healthBar, [0,41], [200,41], [20,40]);
-        this.enemyHealth = new Sprite (healthBar, [0,41], [200,41], [580,40]);
-        
-        let leftLegsParam = new GenericParametrs(leftLegs,[41,62], [21,0]);
-        let rightLegsParam = new GenericParametrs(rightLegs, [44,64],[22,0]);
-        let leftArmsParam = new GenericParametrs(leftArms, [166,133], [140,20]);
-        let rightArmsParam = new GenericParametrs(rightArms, [77,140], [25,30]);
-        let bodyParam = new GenericParametrs(bodys, [134,150], [67,100]);
-        let headParam = new GenericParametrs(heads, [150,137], [90,100]);
-
-        this.enemy = new enemySprite([650,375], 7, leftLegsParam, rightLegsParam, leftArmsParam, bodyParam, rightArmsParam, headParam ); 
-        this.instances.push(this.player, this.enemy, this.playerHealth, this.enemyHealth);
+        this.instances.push(this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health);
         this.lastTime = Date.now();
         this.main();
     }
@@ -189,7 +173,9 @@ class Game {
             if (this.gameOver) {
                 this.highscore();
             }
-            this.checkCollision();
+            if (this.player.cast || this.enemy.cast) {
+                this.checkCollision();
+            }
             requestAnimationFrame(this.main.bind(this));
         }
         else {
@@ -199,46 +185,44 @@ class Game {
 
     update(dt) {
         this.instances.forEach((item) => item.update(dt));
-            if (this.cast) {
-                this.cast.update(dt);
-        }
     }
 
     render() {
         this.ctx.drawImage(resources.get(gameBackground), 0, 0 );
         this.ctx.textAlign = "start";
-        this.ctx.fillText(this.userName, 40, 40);
+        this.ctx.fillText(this.player.name, 40, 40);
         this.ctx.textAlign = "end";
-        this.ctx.fillText(this.enemyName, 760 ,40)
+        this.ctx.fillText(this.enemy.name, 760 ,40)
         this.ctx.drawImage(resources.get(healthBar), 0, 0, 200, 41, 20, 40, 200, 41);
         this.ctx.drawImage(resources.get(healthBar), 0, 0, 200, 41, 580, 40, 200, 41);
         this.instances.forEach((item)=> item.render(this.ctx));
-        if (this.cast) {
-            this.cast.render(this.ctx);
-        }
-       
     }
 
     checkCollision() {
-        if (this.cast && this.cast.posCanvas[0] + this.cast.size[0] > this.enemy.posCanvas[0]) {
-            this.cast = null;
-            this.enemy.action('hurt');
-            this.enemyHealth.size[0] -= 105; 
-            if (this.enemyHealth.size[0] < 0) {
-                let enemyIndex = this.instances.indexOf(this.enemy);
-                 let leftLegsParam = new GenericParametrs(leftLegs,[41,62], [21,0]);
-                let rightLegsParam = new GenericParametrs(rightLegs, [44,64],[22,0]);
-                let leftArmsParam = new GenericParametrs(leftArms, [166,133], [140,20]);
-                let rightArmsParam = new GenericParametrs(rightArms, [77,140], [25,30]);
-                let bodyParam = new GenericParametrs(bodys, [134,150], [67,100]);
-                let headParam = new GenericParametrs(heads, [150,137], [90,100]);
-                this.enemy = new enemySprite([650,375], 7, leftLegsParam, rightLegsParam, leftArmsParam, bodyParam, rightArmsParam, headParam ); 
-                this.instances[enemyIndex]=this.enemy;
-                this.enemyName = Game.genericEnemyName();
+        let cast = this.player.cast||this.enemy.cast;
+        let target = this.player.cast ? this.enemy : this.player;
+        if (cast.posCanvas[0] < this.player.sprite.posCanvas[0]+ this.player.sprite.size[0]/2 || cast.posCanvas[0] > this.enemy.sprite.posCanvas[0]-cast.size[0]){
+            let castIndex = this.instances.indexOf(cast);
+            this.instances.splice(castIndex,1);
+            this.player.cast = null;
+            this.enemy.cast = null;
+            target.sprite.action('hurt');
+            target.health.size[0] -= 105; 
+            if (this.enemy.health.size[0] <= 0) {
+                let enemyIndex = this.instances.indexOf(this.enemy.sprite);
+                this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
+                this.instances[enemyIndex]=this.enemy.sprite;
+                this.enemy.name = Game.genericEnemyName();
                 this.score++;
-                this.enemyHealth.size[0] = 200;
-            }   
-            this.turn="player";
+                this.enemy.health.size[0] = 200;
+            }  
+            if (this.player.health.size[0] <= 0) {
+                this.player.sprite.action('die');
+                setTimeout(()=>{
+                    this.gameOver = true;
+                },1500)
+            }
+        this.turn ="player";
         }
     }
 
@@ -249,7 +233,6 @@ class Game {
             let interval = setInterval(() => {
                     if (spell) {
                         resolve();
-                        clearInterval(interval);
                     }
                 }, 0)
             })
@@ -258,27 +241,25 @@ class Game {
                     let interval =  setInterval(() => {
                         if (answer) {
                             resolve();
-                            clearInterval(interval);
                         }
                     },0);
                 })
             })
             .then(()=> {
                 if (answer == result || answer.indexOf(result) != -1) {
-                    this.player.action("attack",spell);
-                    this.cast = new Sprite(fireballPic, [0, (spell%3)*49], [128,49], [this.player.posCanvas[0], this.player.posCanvas[1]+this.player.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, true)
+                    this.player.sprite.action("attack", spell);
+                    this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
+                    this.instances.push(this.player.cast);
                     let newAudio = new Audio('../audio/player_spell.wav');
                     newAudio.play();
                 }
                 else {
                     this.turn = "enemy";
-                    console.log("you are wrong");
                 }
                 spellBar.classList.toggle("hidden");
                 taskDialog.classList.toggle("hidden");
-
                 spell = null;
-                answer =null;
+                answer = null;
                 userInput.value = '';
                
             })
@@ -286,37 +267,15 @@ class Game {
         }
 
     enemyTurn() {
-        let promise = new Promise((resolve, reject) => {
-            this.turn = null;
-            setTimeout(()=>{
-                this.enemy.action("attack");
-                resolve();
-            }, 2000)
-        })
-        promise.then(()=> {
-            return new Promise((resolve,reject) => {
-                setTimeout(()=>{
-                    this.playerHealth.size[0] -= 100; 
-                    if (this.playerHealth.size[0] <= 0) {
-                        this.player.action('die');
-                        resolve();
-                    } 
-                    else {
-                        this.player.action('hurt');
-                        this.turn = "player";
-                    }
-                }, 1500)
-            })
-        })
-        .then(() => {
-            setTimeout(() => {
-                this.gameOver = true;
-            }, 1000)
-        })
+        this.turn = null;            
+        this.enemy.sprite.action("attack");
+        this.enemy.cast = new Sprite(boulder, [0,0], [120,120], [this.enemy.sprite.posCanvas[0] - 120, this.enemy.sprite.posCanvas[1]],0,[0],'rotate',false,'left');
+        this.instances.push(this.enemy.cast);
     }
+
     showHighscore() {
         let highscore = JSON.parse(window.localStorage.getItem('highscore')) || [ ];
-        highscore.push({'user': this.userName, 'score': this.score});
+        highscore.push({'user': this.player.name, 'score': this.score});
         highscore = _.sortBy(highscore, (a)=> -a.score);
         if (highscore.length > 10) {
             highscore.length = 10;
@@ -333,12 +292,13 @@ class Game {
     }
 }
 
-
-class GenericParametrs{
-    constructor(url,simpleSize, wrapPoint) {
-        this.url = url;
-        this.simpleSize = simpleSize;
-        this.wrapPoint = wrapPoint;
-        this.pos = _.random(0,2);
-    }
-}
+import  '../css/style.css';
+import resources from './resources.js';
+import Sprite from './sprite.js';
+import arithmetic from './tasks/arithmetic.js';
+import translate from './tasks/translate.js';
+import dragNDrop from './tasks/dragNDrop.js';
+import listening from './tasks/listening.js';
+import sequence from './tasks/sequence.js';
+import memory from './tasks/memory.js';
+import enemySprite from './enemySprite.js'; 

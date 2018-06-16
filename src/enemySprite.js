@@ -1,7 +1,13 @@
 import resources from './resources.js';
 
 export default class enemySprite {
-    constructor (posCanvas, speed, leftLegs, rightLegs, leftArms, bodys, rightArms, heads) { 
+    constructor (posCanvas, speed, leftLegs, rightLegs, leftArms, bodys, rightArms, heads) {
+        this.leftLegsParam = new GenericParametrs(leftLegs,[41,62], [21,0]);
+        this.rightLegsParam = new GenericParametrs(rightLegs, [44,64],[22,0]);
+        this.leftArmsParam = new GenericParametrs(leftArms, [200,151], [175,20]);
+        this.rightArmsParam = new GenericParametrs(rightArms, [77,140], [25,30]);
+        this.bodysParam = new GenericParametrs(bodys, [134,150], [67,100]);
+        this.headsParam = new GenericParametrs(heads, [150,187], [90,100]); 
         this.idle = [
             [[-50,20,0],    [-18,90,0],    [15,90,0],   [0,70,0],   [50,20,0],      [-15,10,0]],
             [[-50,20,4],    [-18,90,0],    [15,90,0],   [0,70,0],   [50,20,-4],     [-15,10,1]],
@@ -28,12 +34,11 @@ export default class enemySprite {
         ];
         this.speed = typeof speed === 'number' ? speed : 0;
         this.posCanvas = posCanvas;
-        this.parts = [leftArms, leftLegs, rightLegs, bodys, rightArms, heads];// INSERT NEW PARTS
+        this.parts = [this.leftArmsParam, this.leftLegsParam, this.rightLegsParam, this.bodysParam, this.rightArmsParam, this.headsParam];
         this.frames = this.idle;
         this._index = 0;
         this.once = false;
-    }
-    
+    } 
     update(dt) {
         this._index += dt * this.speed;
     }
@@ -69,3 +74,12 @@ export default class enemySprite {
         this.once = true;
     }
 };
+
+class GenericParametrs{
+    constructor(url,simpleSize, wrapPoint) {
+        this.url = url;
+        this.simpleSize = simpleSize;
+        this.wrapPoint = wrapPoint;
+        this.pos = _.random(0,5);
+    }
+}

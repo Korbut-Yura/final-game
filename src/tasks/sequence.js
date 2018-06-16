@@ -1,10 +1,12 @@
 export default function sequence() {
+    const repeat = document.querySelector(".fa-redo-alt");
+    const taskExplanation = document.getElementById('task-explanation');
     userInput.classList.remove("hidden");
     task.classList.remove('hidden');
-    const taskExplanation = document.getElementById('task-explanation');
+    repeat.classList.add('hidden');
     taskExplanation.innerText = "Закончите последовательнотсь.";
 
-    let option = ['prev','prev','prev'];
+    let option = ['multy','prev','sum'];
     let curOption = _.sample(option);
     let item = _.random(1,9);
     let randomItem = _.random(2,9);
