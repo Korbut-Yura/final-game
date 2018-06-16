@@ -20,12 +20,11 @@ const startButton = document.getElementById("button-start");
 const modalDialog = document.querySelector(".modalDialog");
 const spellBar = document.querySelector(".modalDialog-spellBar");
 const taskDialog = document.querySelector(".modalDialog-task");
-const task = document.getElementById("task");
 const userInput = document.getElementById("userInput");
 const accept = document.getElementById("accept");
-const taskExplanation = document.getElementById('task-explanation');
 const highscoreTable = document.querySelector(".highscoreTable");
 const audio = document.getElementById('audio');
+let newAudio;
 
 let result;
 let spell;
@@ -38,6 +37,10 @@ nav.addEventListener("click", (e) => {
         sections.forEach((item) => {
             item.style.display="none";
         })
+        navElem.forEach(i => {
+            i.classList.remove('active');
+        })
+       e.target.classList.add('active'); 
        let index = navElem.indexOf(e.target);
        sections[index].style.display="block"; 
     }
@@ -202,6 +205,7 @@ class Game {
         let cast = this.player.cast||this.enemy.cast;
         let target = this.player.cast ? this.enemy : this.player;
         if (cast.posCanvas[0] < this.player.sprite.posCanvas[0]+ this.player.sprite.size[0]/2 || cast.posCanvas[0] > this.enemy.sprite.posCanvas[0]-cast.size[0]){
+            newAudio.pause();
             let castIndex = this.instances.indexOf(cast);
             this.instances.splice(castIndex,1);
             this.player.cast = null;
@@ -209,6 +213,9 @@ class Game {
             target.sprite.action('hurt');
             target.health.size[0] -= 105; 
             if (this.enemy.health.size[0] <= 0) {
+                newAudio = new Audio('../audio/win_sound.wav');
+                gameWrapper.appendChild(newAudio);
+                newAudio.play(); 
                 let enemyIndex = this.instances.indexOf(this.enemy.sprite);
                 this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
                 this.instances[enemyIndex]=this.enemy.sprite;
@@ -250,7 +257,8 @@ class Game {
                     this.player.sprite.action("attack", spell);
                     this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
                     this.instances.push(this.player.cast);
-                    let newAudio = new Audio('../audio/player_spell.wav');
+                    newAudio = new Audio('../audio/player_spell.wav');
+                    gameWrapper.appendChild(newAudio);
                     newAudio.play();
                 }
                 else {
@@ -269,8 +277,11 @@ class Game {
     enemyTurn() {
         this.turn = null;            
         this.enemy.sprite.action("attack");
-        this.enemy.cast = new Sprite(boulder, [0,0], [120,120], [this.enemy.sprite.posCanvas[0] - 120, this.enemy.sprite.posCanvas[1]],0,[0],'rotate',false,'left');
+        this.enemy.cast = new Sprite(boulder, [0,0], [130,130], [this.enemy.sprite.posCanvas[0] - 130, 410], 10 ,[0,1,2,3,4,5], 'horisontal' ,false, 'left');
         this.instances.push(this.enemy.cast);
+        newAudio = new Audio('../audio/bowling_roll.ogg');
+        gameWrapper.appendChild(newAudio);
+        newAudio.play();
     }
 
     showHighscore() {
@@ -281,13 +292,13 @@ class Game {
             highscore.length = 10;
         }
         highscoreTable.classList.toggle('hidden');
-        let list = document.createElement('ul');
+        let list = document.createElement('ol');
         for (let i=0 ; i < highscore.length; i++) {
             let li = document.createElement('li');
             li.innerText =`${highscore[i].user} ${highscore[i].score}`;
             list.appendChild(li);
         }
-        highscoreTable.appendChild(list);
+        highscoreTable.insertBefore(list,document.querySelector('.highscoreTable button'));
             localStorage.setItem('highscore', JSON.stringify(highscore)); 
     }
 }

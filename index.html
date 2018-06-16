@@ -14,7 +14,6 @@
         </header>
         <nav>
             <ul>
-                <li id="about">ABOUT</li>
                 <li id="rules">RULES</li>
                 <li id ="developer">DEVELOPER</li>
                 <li id="screenshots">SCREENSHOTS</li>
@@ -22,59 +21,119 @@
             </ul>
         </nav>
         <main>
-            <section class="about"> 
-                <h2>ABOUT</h2>
-
-            </section>
             <section class="rules">
                 <h2>RULES</h2>
+                <ol>
+                    <li>You start the first.</li>
+                    <li>Select the spell (each spell is a separate task).</li>
+                    <li>To apply the spell, you need to complete the task.</li>
+                    <li>If the task was decided incorrectly, the move passes to the enemy.</li>
+                    <li>Win as many opponents as possible.</li>
+                    <li>Have fun!</li>
+                </ol>
             </section>
             <section class="developer">
                 <h2>DEVELOPER</h2>
+                <p>Hello, my name is Yura Korbut and I'm the developer of this wonderful game) I hope you like it and you set a new record.</p>
                 <figure>
-                    <img width="200px" height="200px" class="developer-foto" src='images/developer.jpg'>
+                    <img width="150px" height="150px" class="developer-foto" src='images/developer.jpg'>
                     <figcaption>
-                            <a href="https://github.com/Korbut-Yura">
-                                <i class="fab fa-github"></i>
-                            </a>
+                        <span>Yura Korbut</span>
+                        <a href="https://github.com/Korbut-Yura">
+                            <i class="fab fa-github"></i>
+                        </a>
                     </figcaption>
                 </figure>
             </section>
             <section class="screenshots">
                 <h2>SCREENSHOTS</h2>
-                <div class="screenshots-preview">
-                    <figure><img src="" alt=""></figure>
-                    <figure><img src="" alt=""></figure>
-                    <figure><img src="" alt=""></figure>
-                    <figure><img src="" alt=""></figure>
-                    <figure><img src="" alt=""></figure>
-                    <figure><img src="" alt=""></figure>
-                </div>
-                
+                <div class = "screenshots-preview">
+                    <figure>
+                        <div class="overlay" id="contenedor1">
+                            <a href="#close">
+                                <img src="./images/screenshot1.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor1">
+                            <img class="imgPreview" src="./images/screenshot1.jpg" />
+                        </a>
+                    </figure>
+                    <figure>
+                        <div class="overlay" id="contenedor2">
+                            <a href="#close">
+                                <img src="./images/screenshot2.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor2">
+                            <img class="imgPreview" src="./images/screenshot2.jpg"/>
+                        </a>
+                    </figure>
+                    <figure>
+                        <div class="overlay" id="contenedor3">
+                            <a href="#close">
+                                <img src="./images/screenshot3.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor3">
+                            <img class="imgPreview" src="./images/screenshot3.jpg"/>
+                        </a>
+                    </figure>
+                    <figure>
+                        <div class="overlay" id="contenedor4">
+                            <a href="#close">
+                                <img src="./images/screenshot4.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor4">
+                            <img class="imgPreview" src="./images/screenshot4.jpg" />
+                        </a>
+                    </figure>
+                    <figure>
+                        <div class="overlay" id="contenedor5">
+                            <a href="#close">
+                                <img src="./images/screenshot5.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor5">
+                            <img class="imgPreview" src="./images/screenshot5.jpg" />
+                        </a>
+                    </figure>
+                    <figure>
+                        <div class="overlay" id="contenedor6">
+                            <a href="#close">
+                                <img src="./images/screenshot6.jpg"/>
+                            </a>
+                        </div>
+                        <a href="#contenedor6">
+                            <img class="imgPreview" src="./images/screenshot6.jpg" />
+                        </a>
+                    </figure>
+                </div> 
             </section>
             <section class="play">
+                <h2>PLAY</h2>
+                <p>If you are ready to fight with great minds, then fill these fields and start fighting.<br>Good luck!
+                </p>
                 <form name="userData">
-                    <input type="text" id="firstName" name="name">
-                    <label for="firstName">First Name</label>
-                    <input type="text" id="secondName" name="name">
-                    <label for="secondName">Second Name</label>
+                    <label for="firstName">First Name: <input type="text" id="firstName" name="name"></label>
+                    <label for="secondName">Last Name: <input type="text" id="secondName" name="name"></label>
                 </form>
                 <button id="button-start">PRESS START</button>
             </section>
         </main>
     </div>
     <div class ="gameWrapper hidden">
-            <audio id ="audio" loop type="audio/ogg" src="audio/littleTown.ogg"></audio>
+            <audio id ="audio" loop='loop' type="audio/ogg" src="audio/littleTown.ogg"></audio>
         <div class="modalDialog hidden">
             <div class="modalDialog-spellBar">
                 <h2>Choose your spell</h2>
                 <ul>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
-                    <li></li>
+                    <li data-title ='Решение арифметических выражений.'></li>
+                    <li data-title ='Перевод слова на русский язык.'></li>
+                    <li data-title ='Составить слово из указанных букв.'></li>
+                    <li data-title ='Написать произнеенное слово.'></li>
+                    <li data-title ='Закончить числовую последовательность.'></li>
+                    <li data-title ='Запомнить число.'></li>
                 </ul>
             </div>
             <div class ="modalDialog-task hidden">
@@ -86,9 +145,10 @@
             </div>
         </div>
         <div class = "highscoreTable hidden">
-                <h2>Таблица результатов</h2>
-            </div>
-            <script src ="dist/main.js"> </script>
+            <h2>Таблица результатов</h2>
+            <button>PLAY AGAIN</button>
+        </div>
+        <script src ="dist/main.js"> </script>
     </div>
    
 </body>

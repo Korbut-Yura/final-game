@@ -1,9 +1,9 @@
 * {
     padding: 0;
     margin: 0;
-    /* border: 1px solid red; */
     box-sizing: border-box;
 }
+
 a {
     text-decoration-line: none;
 }
@@ -43,12 +43,15 @@ nav ul {
     display: flex;
     flex-direction: column;
 }
+ul {
+    list-style-type: none;
+}
 nav li {
     height: 2em;
     display: flex;
     justify-content: stretch;
     align-items:center;
-    list-style-type: none;
+  
     padding-left: 1em;
 }
 nav li:hover {
@@ -68,7 +71,27 @@ section {
     display: none;
     text-align: center;
 }
-section h2 {
+.rules ol {
+    text-align: left;
+    padding: 0 3em;
+}
+#button-start, .highscoreTable button{
+    font: 1em "VanishingBoy", Tahoma, sans-serif;
+    color: rgb(49, 93, 134);
+    padding: 10px;
+    border-radius: 10px;
+    background: linear-gradient(white,rgba(115, 158, 197, 0.5));
+    outline: none;
+}
+p {
+    padding: 0 2em;
+    margin: 1em 0;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+label {
     margin-bottom: 1em;
 }
 .developer-foto {
@@ -76,19 +99,40 @@ section h2 {
     border: 2px solid rgba(115, 158, 197, 0.5);
     box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.7);
 }
+.screenshots {
+    box-sizing: border-box;
+}
 .screenshots-preview {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 1em;
 }
-.screenshots-preview figure {
-    width: 200px;
-    height: 150px;
-    border: 2px solid red;
+.overlay{
+	display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+	z-index: 999;
+}
+.overlay img{
+    max-width: 100%;
+    max-height: 100%;
+    border-radius: 5px;
+}
+.overlay:target {
+	display: block;
+}
+.imgPreview {
+    width: 100%;
 }
 i {
     font-size: 1.5em;
     color: rgb(16, 47, 77);
+}
+i:hover{
+    color:rgb(78, 3, 107);
 }
 canvas {
     margin: 0 auto;
@@ -117,6 +161,7 @@ canvas {
 }
 
 .modalDialog-spellBar ul {
+    position: relative;
     display: grid;
     justify-content: center;
     grid-template-columns: repeat(3, 64px);
@@ -127,41 +172,34 @@ canvas {
 .modalDialog-spellBar li:nth-child(1){
 	background-position: -320px 0;
 }
-.modalDialog-spellBar li:nth-child(1):hover {
-    content: "Решенить арифметических выражений."
-}
-
 .modalDialog-spellBar li:nth-child(2){
 	background-position: -256px 0;
 }
-.modalDialog-spellBar li:nth-child(2):hover {
-    content: "Перевести слова на русский язык."
-}
-
 .modalDialog-spellBar li:nth-child(3){
 	background-position: -192px 0;
 }
-.modalDialog-spellBar li:nth-child(3):hover {
-    content: "Составить слово из указанных букв."
-}
-
 .modalDialog-spellBar li:nth-child(4){
 	background-position: -128px 0;
 }
-.modalDialog-spellBar li:nth-child(3):hover {
-    content: "Написать произнеенное слово."
-}
-
 .modalDialog-spellBar li:nth-child(5){
 	background-position: -64px 0;
 }
-.modalDialog-spellBar li:nth-child(5):hover {
-    content: "Закончить числовую последовательность."
-}
-
 .modalDialog-spellBar li:nth-child(6){
 	background-position: 0 0;
 }
+.modalDialog-spellBar li:hover::after {
+    position: absolute;
+    bottom: -100px;
+    content: attr(data-title);
+    background: rgba(255, 255, 255, 0.7);;
+    border: 3px solid rgba(115, 158, 197, 0.5);
+    display: block;
+    width: 100%;;
+    height: 2em;
+    text-align: center;
+    z-index: 1000;
+}
+
 #task {
     border: 2px solid white;
     background-color: rgba(233, 233, 233, 0.5);
@@ -188,9 +226,6 @@ canvas {
 .fas {
     font-size: 0.5em;
 }
-.hidden {
-    display: none;
-}   
 .highscoreTable {
     position: absolute;
     z-index: 100;
@@ -203,6 +238,12 @@ canvas {
     margin-top: -250px;
     background-color: azure;
 }
+.active {
+    background-color: rgba(115, 158, 197, 0.5);
+}
+.hidden {
+    display: none;
+}   
 
 @font-face {
     font-family: "Tangak";

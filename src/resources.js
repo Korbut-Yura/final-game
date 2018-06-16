@@ -1,5 +1,4 @@
 let resourceCache ={};
-let loading =[];
 let readyCallbacks =[];
 
 export default function resources(urlOrArray) {
@@ -33,10 +32,9 @@ resources.get = function (url) {
 }
 
 resources.isReady = function() {
-    var ready = true;
-    for(var k in resourceCache) {
-        if(resourceCache.hasOwnProperty(k) &&
-            !resourceCache[k]) {
+    let ready = true;
+    for(let k in resourceCache) {
+        if(resourceCache.hasOwnProperty(k) && !resourceCache[k]) {
             ready = false;
         }
     }
