@@ -20,7 +20,8 @@ export default function listening() {
     utterThis.text = result;
     utterThis.rate = 0.5;
     utterThis.lang = 'en-US';
-    utterThis.voice
+    utterThis.voice = 'Google US English';
+    utterThis.volume = 100;
     synth.speak(utterThis);
 
     return result;

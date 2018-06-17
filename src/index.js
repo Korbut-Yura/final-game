@@ -13,6 +13,7 @@ const rightArms = require('../images/enemy_parts/rightArms.png');
 const fireballSound = require('../audio/player_spell.wav');
 const boulderSound = require('../audio/bowling_roll.ogg');
 const winSound = require('../audio/win_sound.wav');
+const gameOverSound = require('../audio/gameover.ogg');
 
 const gameWrapper = document.querySelector(".gameWrapper");
 const nav = document.querySelector("nav");
@@ -32,6 +33,7 @@ let newAudio;
 let result;
 let spell;
 let answer;
+let game;
 
 /* ------ EVENT -------- */
 
@@ -54,11 +56,9 @@ startButton.addEventListener("click", () => {
     if (userData.every((input)=> input.value)) {
         landingPage.classList.toggle('hidden');
         gameWrapper.classList.toggle('hidden');
-        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
-        resources.onReady(() => {
-            let game = new Game(userData);
-            game.init();
-        });
+        game=null;
+        game = new Game(userData);
+        game.init();
     }
     else {
         alert("Please, insert your first name and second name");
@@ -74,7 +74,7 @@ spellBar.addEventListener("click", (e) => {
         spell = ulChilds.indexOf(e.target)+'';
         switch(spell) {
             case '0':  
-                result = arithmetic();
+                result = +arithmetic();
                 console.log(result);
                 break;
             case '1':  
@@ -91,11 +91,11 @@ spellBar.addEventListener("click", (e) => {
                 console.log(result);
                 break;
             case '4':
-                result = sequence();
+                result = +sequence();
                 console.log(result);
                 break;
             case '5':
-                result = memory();
+                result = +memory();
                 console.log(result);
                 break;
         }
@@ -152,15 +152,18 @@ class Game {
     }
 
     init() {
-        this.canvas.width = 800;
-        this.canvas.height = 600;
-        gameWrapper.appendChild(this.canvas);
-        audio.play();
-        this.ctx.fillStyle = "rgb(49, 93, 134)";
-        this.ctx.font = "30px 'VanishingBoy'";
-        this.instances.push(this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health);
-        this.lastTime = Date.now();
-        this.main();
+        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
+        resources.onReady(() => {
+            this.canvas.width = 800;
+            this.canvas.height = 600;
+            gameWrapper.appendChild(this.canvas);
+            audio.play();
+            this.ctx.fillStyle = "rgb(49, 93, 134)";
+            this.ctx.font = "30px 'VanishingBoy'";
+            this.instances.push(this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health);
+            this.lastTime = Date.now();
+            this.main();
+        });
     }
 
     main() {
@@ -227,27 +230,30 @@ class Game {
             }  
             if (this.player.health.size[0] <= 0) {
                 this.player.sprite.action('die');
+                audio.pause();
+                new Audio(gameOverSound).play();
                 setTimeout(()=>{
                     this.gameOver = true;
                 },1500)
+                return;
             }
         this.turn ="player";
         }
     }
 
     playerTurn() {
-        let promise = new Promise((resolve, reject) => {
+       new Promise((resolve) => {
             this.turn = null;
             modalDialog.classList.toggle("hidden");
-            let interval = setInterval(() => {
+            setInterval(() => {
                     if (spell) {
                         resolve();
                     }
                 }, 0)
             })
             .then(()=> {
-                return new Promise((resolve,reject) => {
-                    let interval =  setInterval(() => {
+                return new Promise((resolve) => {
+                    setInterval(() => {
                         if (answer) {
                             resolve();
                         }
@@ -255,7 +261,7 @@ class Game {
                 })
             })
             .then(()=> {
-                if (answer == result || answer.indexOf(result) != -1) {
+                if (answer == result || _.includes(result,answer)) {
                     this.player.sprite.action("attack", spell);
                     this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
                     this.instances.push(this.player.cast);
@@ -295,7 +301,8 @@ class Game {
         let list = document.createElement('ol');
         for (let i=0 ; i < highscore.length; i++) {
             let li = document.createElement('li');
-            li.innerText =`${highscore[i].user} ${highscore[i].score}`;
+            li.innerHTML = `<span>${highscore[i].user}</span> <span class='score'>${highscore[i].score}</span>`
+            // li.innerText =`${highscore[i].user} ${highscore[i].score}`;
             list.appendChild(li);
         }
         highscoreTable.insertBefore(list,document.querySelector('.highscoreTable button'));

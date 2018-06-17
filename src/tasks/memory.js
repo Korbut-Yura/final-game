@@ -4,7 +4,7 @@ export default function memory() {
     task.classList.remove('hidden');
     userInput.classList.add('hidden');
     repeat.classList.add('hidden');
-    taskExplanation.innerText = "Запомните и введите пятизначное число."
+    taskExplanation.innerText = "Запомните и введите шестизначное число."
     task.innerText = "Нажми, чтобы увидеть число.";
     let result = String(Math.random()).slice(2,8);
     task.addEventListener('click', () => {

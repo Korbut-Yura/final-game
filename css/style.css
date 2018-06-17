@@ -70,11 +70,17 @@ section {
     height: 100%;
     display: none;
     text-align: center;
+    max-height: 100%;
+    overflow: auto;
 }
 .rules ol {
     text-align: left;
     padding: 0 3em;
 }
+ol {
+    list-style-position: inside;
+}
+
 #button-start, .highscoreTable button{
     font: 1em "VanishingBoy", Tahoma, sans-serif;
     color: rgb(49, 93, 134);
@@ -95,12 +101,14 @@ label {
     margin-bottom: 1em;
 }
 .developer-foto {
+    width: 5em;
+    height: 5em;
     border-radius: 50%;
-    border: 2px solid rgba(115, 158, 197, 0.5);
     box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.7);
 }
 .screenshots {
     box-sizing: border-box;
+    overflow-y: hidden;
 }
 .screenshots-preview {
     display: grid;
@@ -228,15 +236,23 @@ canvas {
 }
 .highscoreTable {
     position: absolute;
+    padding: 1em;
     z-index: 100;
     box-shadow: 0 0 5em 0 rgba(0, 0, 0, 0.7);
-    width: 400px;
-    height: 500px;
+    width: 15em;
+    height: auto;
     left: 50%;
     top: 50%;
-    margin-left: -200px;
-    margin-top: -250px;
-    background-color: azure;
+    margin-left: -7.5em;
+    margin-top: -px;
+    border: 3px solid rgba(115, 158, 197, 0.5);
+    background-color:  rgba(200, 213, 224, 0.5);
+}
+.highscoreTable ol{
+    text-align: left;
+}
+.score {
+    float: right;
 }
 .active {
     background-color: rgba(115, 158, 197, 0.5);

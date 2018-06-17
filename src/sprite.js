@@ -41,7 +41,7 @@ export default class Sprite {
         ctx.drawImage(resources.get(this.url), this.posSprite[0] + deltaX, this.posSprite[1] + deltaY, this.size[0], this.size[1], this.posCanvas[0], this.posCanvas[1], this.size[0], this.size[1]);
     }
 
-    action(move, spell) {
+    action(move) {
         this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf(move));
         this.once = true;
         this._index = 0;
