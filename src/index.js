@@ -20,7 +20,7 @@ const nav = document.querySelector("nav");
 const landingPage = document.querySelector(".wrapper");
 const navElem = Array.from(document.querySelectorAll("nav li"));
 const sections = Array.from(document.querySelectorAll("section"));
-const startButton = document.getElementById("button-start");
+const startButton = Array.from(document.querySelectorAll(".button-start"));
 const modalDialog = document.querySelector(".modalDialog");
 const spellBar = document.querySelector(".modalDialog-spellBar");
 const taskDialog = document.querySelector(".modalDialog-task");
@@ -50,20 +50,25 @@ nav.addEventListener("click", (e) => {
        sections[index].style.display="block"; 
     }
 })
-
-startButton.addEventListener("click", () => {
-    let userData = Array.from(document.userData.name);
-    if (userData.every((input)=> input.value)) {
-        landingPage.classList.toggle('hidden');
-        gameWrapper.classList.toggle('hidden');
-        game=null;
-        game = new Game(userData);
-        game.init();
-    }
-    else {
-        alert("Please, insert your first name and second name");
-    }
+startButton.forEach(i=> {
+    i.addEventListener("click", () => {
+        let userData = Array.from(document.userData.name);
+        if (userData.every((input)=> input.value)) {
+            landingPage.classList.add('hidden');
+            highscoreTable.classList.add('hidden');
+            if (game) {
+                game.status = false; 
+            }
+            gameWrapper.classList.remove('hidden');
+            game = new Game(userData)
+            game.init();
+        }
+        else {
+            alert("Please, insert your first name and second name");
+        }
+    })
 })
+
 
 spellBar.addEventListener("click", (e) => {
     if (e.target.tagName == 'LI') {
@@ -108,9 +113,9 @@ accept.addEventListener("click", () => {
         answer = arr.map((i)=> i.innerText).join('');
     }
     else {
-        answer = userInput.value ||' ';
+        answer = userInput.value.toLowerCase() ||' ';
     }
-     audio.play()
+    audio.play()
     modalDialog.classList.toggle('hidden');
   })
 
@@ -134,7 +139,7 @@ class Game {
             sprite: new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads),
             health: new Sprite (healthBar, [0,41], [200,41], [580,40])
         };
-        this.canvas = document.createElement("canvas");
+        this.canvas = document.querySelector(".canvas");
         this.ctx = this.canvas.getContext("2d");
         this.instances = [];
         this.lastTime = null;
@@ -142,6 +147,7 @@ class Game {
         this.cast = null;
         this.gameOver = false;
         this.score = 0;
+        this.status = true;  //for exit from requestAnimationFrame
     }
 
     static genericEnemyName() {
@@ -152,18 +158,17 @@ class Game {
     }
 
     init() {
-        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
         resources.onReady(() => {
             this.canvas.width = 800;
             this.canvas.height = 600;
-            gameWrapper.appendChild(this.canvas);
             audio.play();
             this.ctx.fillStyle = "rgb(49, 93, 134)";
             this.ctx.font = "30px 'VanishingBoy'";
             this.instances.push(this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health);
             this.lastTime = Date.now();
-            this.main();
+            this.main.call(this);
         });
+        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
     }
 
     main() {
@@ -185,7 +190,9 @@ class Game {
             if (this.player.cast || this.enemy.cast) {
                 this.checkCollision();
             }
-            requestAnimationFrame(this.main.bind(this));
+            if (this.status) {
+                requestAnimationFrame(this.main.bind(this));
+            }
         }
         else {
             this.showHighscore();
@@ -196,8 +203,10 @@ class Game {
         this.instances.forEach((item) => item.update(dt));
     }
 
-    render() {
+    render() { 
         this.ctx.drawImage(resources.get(gameBackground), 0, 0 );
+        this.ctx.textAlign = "center";
+        this.ctx.fillText('Your score:' + this.score, 400, 40);
         this.ctx.textAlign = "start";
         this.ctx.fillText(this.player.name, 40, 40);
         this.ctx.textAlign = "end";
@@ -244,18 +253,26 @@ class Game {
     playerTurn() {
        new Promise((resolve) => {
             this.turn = null;
-            modalDialog.classList.toggle("hidden");
-            setInterval(() => {
-                    if (spell) {
-                        resolve();
-                    }
-                }, 0)
+            modalDialog.classList.remove("hidden");
+            let interval = setInterval(() => {
+                if (spell) {
+                    clearInterval(interval);
+                    resolve();
+                }
+                if (!this.status) {
+                    clearInterval(interval);
+                }
+            }, 0)
             })
             .then(()=> {
                 return new Promise((resolve) => {
-                    setInterval(() => {
+                    let interval = setInterval(() => {
                         if (answer) {
+                            clearInterval(interval)
                             resolve();
+                        }
+                        if (!this.status) {
+                            clearInterval(interval);
                         }
                     },0);
                 })
@@ -276,7 +293,6 @@ class Game {
                 spell = null;
                 answer = null;
                 userInput.value = '';
-               
             })
             .catch((e)=> {console.log(e)})    
         }
@@ -292,21 +308,22 @@ class Game {
 
     showHighscore() {
         let highscore = JSON.parse(window.localStorage.getItem('highscore')) || [ ];
+        const list = document.querySelector('.highscoreTable ol');
         highscore.push({'user': this.player.name, 'score': this.score});
         highscore = _.sortBy(highscore, (a)=> -a.score);
         if (highscore.length > 10) {
             highscore.length = 10;
         }
-        highscoreTable.classList.toggle('hidden');
-        let list = document.createElement('ol');
+        highscoreTable.classList.remove('hidden');
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
         for (let i=0 ; i < highscore.length; i++) {
             let li = document.createElement('li');
-            li.innerHTML = `<span>${highscore[i].user}</span> <span class='score'>${highscore[i].score}</span>`
-            // li.innerText =`${highscore[i].user} ${highscore[i].score}`;
+            li.innerHTML = `<span>${highscore[i].user}</span> <span class='score'>${highscore[i].score}</span>`;
             list.appendChild(li);
         }
-        highscoreTable.insertBefore(list,document.querySelector('.highscoreTable button'));
-            localStorage.setItem('highscore', JSON.stringify(highscore)); 
+        localStorage.setItem('highscore', JSON.stringify(highscore)); 
     }
 }
 

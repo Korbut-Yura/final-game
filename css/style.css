@@ -80,8 +80,12 @@ section {
 ol {
     list-style-position: inside;
 }
-
-#button-start, .highscoreTable button{
+button {
+    font: 15px "VanishingBoy", Tahoma, sans-serif;
+    padding: 0 10px;
+    color: rgb(49, 93, 134)
+}
+.button-start{
     font: 1em "VanishingBoy", Tahoma, sans-serif;
     color: rgb(49, 93, 134);
     padding: 10px;
@@ -244,7 +248,7 @@ canvas {
     left: 50%;
     top: 50%;
     margin-left: -7.5em;
-    margin-top: -px;
+    margin-top: -260px;
     border: 3px solid rgba(115, 158, 197, 0.5);
     background-color:  rgba(200, 213, 224, 0.5);
 }

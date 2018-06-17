@@ -2,11 +2,12 @@ let resourceCache ={};
 let readyCallbacks =[];
 
 export default function resources(urlOrArray) {
-    if (urlOrArray instanceof Array) {
-        urlOrArray.forEach((url) => resources.load(url));
+    if (urlOrArray.every(i => resourceCache[i])) {
+
+        readyCallbacks.forEach(function(func) { func()})
     }
     else {
-        resources.load(urlOrArray);
+        urlOrArray.forEach((url) => resources.load(url));    
     }
 }
 
@@ -42,5 +43,6 @@ resources.isReady = function() {
 }
 
 resources.onReady = function(func) {
+    readyCallbacks =[];
     readyCallbacks.push(func);
 }
