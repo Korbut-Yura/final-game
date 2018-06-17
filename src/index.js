@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const hero = require('../images/knight.png');
+const hero = require('../images/player.png');
 const gameBackground = require('../images/game-background.png');
 const healthBar = require('../images/health-bar.png');
 const fireball = require('../images/fireball.png');
@@ -50,7 +50,8 @@ nav.addEventListener("click", (e) => {
        sections[index].style.display="block"; 
     }
 })
-startButton.forEach(i=> {
+
+startButton.forEach( i => {
     i.addEventListener("click", () => {
         let userData = Array.from(document.userData.name);
         if (userData.every((input)=> input.value)) {
@@ -131,7 +132,7 @@ class Game {
     constructor(userData) {
         this.player={
             name: userData.reduce((a,b)=> a.value+' '+ b.value),
-            sprite: new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horisontal", false, false, ['idle','secondIdle','attack','hurt','die']),
+            sprite: new Sprite(hero, [0,0], [200,220], [60,350], 10, [0,1,2,3,4,5,6,7,8,9], "horisontal", false, false, ['idle','attack','hurt','die']),
             health: new Sprite (healthBar, [0,41], [200,41], [20,40])
         };
         this.enemy={
@@ -225,8 +226,19 @@ class Game {
             this.instances.splice(castIndex,1);
             this.player.cast = null;
             this.enemy.cast = null;
-            target.sprite.action('hurt');
             target.health.size[0] -= 105; 
+            if (this.player.health.size[0] <= 0) {
+                audio.pause();
+                new Audio(gameOverSound).play();
+                this.player.sprite.action('die');
+                setTimeout(()=>{
+                    this.gameOver = true;
+                },1000);
+                return
+            } 
+            else {
+                target.sprite.action('hurt');
+            }
             if (this.enemy.health.size[0] <= 0) {
                 newAudio = new Audio(winSound);
                 newAudio.play(); 
@@ -237,15 +249,6 @@ class Game {
                 this.score++;
                 this.enemy.health.size[0] = 200;
             }  
-            if (this.player.health.size[0] <= 0) {
-                this.player.sprite.action('die');
-                audio.pause();
-                new Audio(gameOverSound).play();
-                setTimeout(()=>{
-                    this.gameOver = true;
-                },1500)
-                return;
-            }
         this.turn ="player";
         }
     }

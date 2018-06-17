@@ -110,7 +110,7 @@ label {
     border-radius: 50%;
     box-shadow: 0 0 2em 0 rgba(0, 0, 0, 0.7);
 }
-.screenshots {
+.screenshots, .play {
     box-sizing: border-box;
     overflow-y: hidden;
 }

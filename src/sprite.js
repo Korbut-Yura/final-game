@@ -27,8 +27,13 @@ export default class Sprite {
         if (this.speed != 0) {
             let max = this.frames.length;
             let index = Math.floor(this._index);
-            frame = this.frames[index % max];
-            if (this.once && frame == _.last(this.frames)) {
+            if (this.once == "last" && this._index >= max) {
+                frame = _.last(this.frames);
+            }
+            else {
+                frame = this.frames[index % max];
+            }
+            if (this.once === true && frame == _.last(this.frames)) {
                 this.once = false;
                 this.posSprite[1] = 0;
             } 
@@ -43,7 +48,7 @@ export default class Sprite {
 
     action(move) {
         this.posSprite[1] += this.size[1]*(this.spriteMap.indexOf(move));
-        this.once = true;
+        move === 'die' ? this.once = 'last' : this.once = true;
         this._index = 0;
     }
 };
