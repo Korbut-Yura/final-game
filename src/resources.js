@@ -1,4 +1,4 @@
-const preloader = document.querySelector('.preloader');
+const preloader = document.querySelector('.preloaderWrapper');
 let resourceCache ={};
 let readyCallbacks =[];
 let status = true;
@@ -22,7 +22,7 @@ resources.load = function(url) {
             let img = new Image();
             img.onload = () => {
                 resourceCache[url] = img;
-                if(resources.isReady()&&status) {
+                if(resources.isReady() && status) {
                         status = false;
                         preloader.classList.add('hidden');
                         readyCallbacks.forEach(function(func) { func()});
@@ -35,7 +35,7 @@ resources.load = function(url) {
             let audio = new Audio();
             audio.oncanplaythrough = () => {
                 resourceCache[url] = audio;
-                if(resources.isReady()&& status) {
+                if(resources.isReady() && status) {
                     status = false;
                     preloader.classList.add('hidden');
                     readyCallbacks.forEach(function(func) { func()});
