@@ -1,6 +1,7 @@
-const preloader = document.querySelector('.preloaderWrapper');
+const preloader = document.querySelector('.preloader');
 let resourceCache ={};
 let readyCallbacks =[];
+let status = true;
 
 export default function resources(urlOrArray) {
     if (urlOrArray.every(i => resourceCache[i])) {
@@ -17,35 +18,36 @@ resources.load = function(url) {
         return resourceCache[url];
     }
     else {
-        if (/.(png|jpg)/.test(url)) {
+        if(/.(png|jpg)$/.test(url)) {
             let img = new Image();
             img.onload = () => {
                 resourceCache[url] = img;
-                if(resources.isReady()) {
-                    preloader.classList.add('hidden');
-                    readyCallbacks.forEach(function(func) { func()});
+                if(resources.isReady()&&status) {
+                        status = false;
+                        preloader.classList.add('hidden');
+                        readyCallbacks.forEach(function(func) { func()});
                 }
             }
             resourceCache[url] = false;
             img.src = url;
         }
-        if (/.(ogg|wav)/.test(url)) {
+        else if (/.(ogg|wav)$/.test(url)) {
             let audio = new Audio();
             audio.oncanplaythrough = () => {
                 resourceCache[url] = audio;
-                if(resources.isReady()) {
+                if(resources.isReady()&& status) {
+                    status = false;
                     preloader.classList.add('hidden');
                     readyCallbacks.forEach(function(func) { func()});
                 }
             }
             resourceCache[url] = false;
             audio.src = url;
-        } 
-       
+        }       
     }
 }
 
-resources.get = function (url) {
+resources.get = function(url) {
     return resourceCache[url];
 }
 

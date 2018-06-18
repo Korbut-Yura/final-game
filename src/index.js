@@ -28,7 +28,6 @@ const userInput = document.getElementById("userInput");
 const accept = document.getElementById("accept");
 const highscoreTable = document.querySelector(".highscoreTable");
 const audio = document.getElementById('audio');
-let newAudio;
 
 let result;
 let spell;
@@ -159,9 +158,9 @@ class Game {
             audio.play();
             this.ctx.fillStyle = "rgb(49, 93, 134)";
             this.ctx.font = "30px 'VanishingBoy'";
-            this.instances.push(this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health);
+            this.instances = [this.player.sprite, this.enemy.sprite, this.player.health, this.enemy.health];
             this.lastTime = Date.now();
-            this.main.call(this);
+            this.main();
         });
         resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys, fireballSound, boulderSound,winSound,gameOverSound]);
     }
@@ -215,7 +214,6 @@ class Game {
         let cast = this.player.cast||this.enemy.cast;
         let target = this.player.cast ? this.enemy : this.player;
         if (cast.posCanvas[0] < this.player.sprite.posCanvas[0]+ this.player.sprite.size[0]/2 || cast.posCanvas[0] > this.enemy.sprite.posCanvas[0]-cast.size[0]){
-            newAudio.pause();
             let castIndex = this.instances.indexOf(cast);
             this.instances.splice(castIndex,1);
             this.player.cast = null;
@@ -230,19 +228,19 @@ class Game {
                 },1000);
                 return
             } 
+            else if (this.enemy.health.size[0] <= 0) {
+                    resources.get(winSound).play();
+                    let enemyIndex = this.instances.indexOf(this.enemy.sprite);
+                    this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
+                    this.instances[enemyIndex]=this.enemy.sprite;
+                    this.enemy.name = Game.genericEnemyName();
+                    this.score++;
+                    this.enemy.health.size[0] = 200;
+            }  
             else {
                 target.sprite.action('hurt');
             }
-            if (this.enemy.health.size[0] <= 0) {
-                newAudio = resources.get(winSound);
-                newAudio.play(); 
-                let enemyIndex = this.instances.indexOf(this.enemy.sprite);
-                this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
-                this.instances[enemyIndex]=this.enemy.sprite;
-                this.enemy.name = Game.genericEnemyName();
-                this.score++;
-                this.enemy.health.size[0] = 200;
-            }  
+            
         this.turn ="player";
         }
     }
@@ -279,8 +277,8 @@ class Game {
                     this.player.sprite.action("attack", spell);
                     this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
                     this.instances.push(this.player.cast);
-                    newAudio = resources.get(fireballSound);
-                    newAudio.play();
+                    let audio = resources.get(fireballSound)
+                    audio.play()
                 }
                 else {
                     this.turn = "enemy";
@@ -299,8 +297,7 @@ class Game {
         this.enemy.sprite.action("attack");
         this.enemy.cast = new Sprite(boulder, [0,0], [130,130], [this.enemy.sprite.posCanvas[0] - 130, 410], 10 ,[0,1,2,3,4,5], 'horisontal' ,false, 'left');
         this.instances.push(this.enemy.cast);
-        newAudio = resources.get(boulderSound);
-        newAudio.play();
+        resources.get(boulderSound).play();
     }
 
     showHighscore() {
