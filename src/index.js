@@ -81,28 +81,22 @@ spellBar.addEventListener("click", (e) => {
         switch(spell) {
             case '0':  
                 result = +arithmetic();
-                console.log(result);
                 break;
             case '1':  
                 result = translate();
-                console.log(result);
                 break;
             case '2':  
                 result = dragNDrop();
-                console.log(result);
                 break;
             case '3':
                 audio.pause();
                 result = listening();
-                console.log(result);
                 break;
             case '4':
                 result = +sequence();
-                console.log(result);
                 break;
             case '5':
                 result = +memory();
-                console.log(result);
                 break;
         }
     }
@@ -169,7 +163,7 @@ class Game {
             this.lastTime = Date.now();
             this.main.call(this);
         });
-        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys]);
+        resources([hero, gameBackground, healthBar, fireball, boulder, leftLegs, rightLegs, leftArms, rightArms, heads, bodys, fireballSound, boulderSound,winSound,gameOverSound]);
     }
 
     main() {
@@ -229,7 +223,7 @@ class Game {
             target.health.size[0] -= 105; 
             if (this.player.health.size[0] <= 0) {
                 audio.pause();
-                new Audio(gameOverSound).play();
+                resources.get(gameOverSound).play();
                 this.player.sprite.action('die');
                 setTimeout(()=>{
                     this.gameOver = true;
@@ -240,7 +234,7 @@ class Game {
                 target.sprite.action('hurt');
             }
             if (this.enemy.health.size[0] <= 0) {
-                newAudio = new Audio(winSound);
+                newAudio = resources.get(winSound);
                 newAudio.play(); 
                 let enemyIndex = this.instances.indexOf(this.enemy.sprite);
                 this.enemy.sprite = new enemySprite([650,375], 7, leftLegs, rightLegs, leftArms, bodys, rightArms, heads); 
@@ -285,7 +279,7 @@ class Game {
                     this.player.sprite.action("attack", spell);
                     this.player.cast = new Sprite(fireball, [0, (spell%3)*49], [128,49], [this.player.sprite.posCanvas[0]+this.player.sprite.size[0]/2, this.player.sprite.posCanvas[1]+this.player.sprite.size[1]/2], 8, [0,1,2,3,4,5], "horisontal", false, 'right')
                     this.instances.push(this.player.cast);
-                    newAudio = new Audio(fireballSound);
+                    newAudio = resources.get(fireballSound);
                     newAudio.play();
                 }
                 else {
@@ -305,7 +299,7 @@ class Game {
         this.enemy.sprite.action("attack");
         this.enemy.cast = new Sprite(boulder, [0,0], [130,130], [this.enemy.sprite.posCanvas[0] - 130, 410], 10 ,[0,1,2,3,4,5], 'horisontal' ,false, 'left');
         this.instances.push(this.enemy.cast);
-        newAudio = new Audio(boulderSound);
+        newAudio = resources.get(boulderSound);
         newAudio.play();
     }
 

@@ -31,6 +31,19 @@ header {
     justify-content: center;
     align-content: center;
 }
+.preloaderWrapper {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+.preloader {
+    align-self: center;
+}
+.preloader h2 {
+    margin-bottom: 0.5em;
+}
 .logo {
     font: 3em "VanishingBoy", Arial , sans-serif;
     align-self: center;

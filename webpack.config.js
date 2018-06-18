@@ -21,7 +21,7 @@ let conf = {
                 loader: 'url-loader?limit=100000' 
             },
             {
-                test: /\.(png|svg|jpg|wav|ogg)$/,
+                test: /\.(png|svg|jpg|wav|gif|ogg)$/,
                 use: [
                     {
                         loader: 'file-loader',

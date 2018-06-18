@@ -1,13 +1,14 @@
+const preloader = document.querySelector('.preloaderWrapper');
 let resourceCache ={};
 let readyCallbacks =[];
 
 export default function resources(urlOrArray) {
     if (urlOrArray.every(i => resourceCache[i])) {
-
         readyCallbacks.forEach(function(func) { func()})
     }
     else {
-        urlOrArray.forEach((url) => resources.load(url));    
+        preloader.classList.remove('hidden');
+        urlOrArray.forEach((url) => resources.load(url));      
     }
 }
 
@@ -16,15 +17,31 @@ resources.load = function(url) {
         return resourceCache[url];
     }
     else {
-        let img = new Image();
-        img.onload = () => {
-            resourceCache[url] = img;
-            if(resources.isReady()) {
-                readyCallbacks.forEach(function(func) { func()});
+        if (/.(png|jpg)/.test(url)) {
+            let img = new Image();
+            img.onload = () => {
+                resourceCache[url] = img;
+                if(resources.isReady()) {
+                    preloader.classList.add('hidden');
+                    readyCallbacks.forEach(function(func) { func()});
+                }
             }
+            resourceCache[url] = false;
+            img.src = url;
         }
-        resourceCache[url] = false;
-        img.src = url;
+        if (/.(ogg|wav)/.test(url)) {
+            let audio = new Audio();
+            audio.oncanplaythrough = () => {
+                resourceCache[url] = audio;
+                if(resources.isReady()) {
+                    preloader.classList.add('hidden');
+                    readyCallbacks.forEach(function(func) { func()});
+                }
+            }
+            resourceCache[url] = false;
+            audio.src = url;
+        } 
+       
     }
 }
 
